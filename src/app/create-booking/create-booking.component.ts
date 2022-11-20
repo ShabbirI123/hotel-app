@@ -1,5 +1,8 @@
-import { Component, OnInit } from '@angular/core';
-import { Booking } from "../booking";
+import {Component, OnInit} from '@angular/core';
+import {Booking} from "../booking";
+import {Bookings} from "../mock-bookings";
+import {Router, ActivatedRoute} from "@angular/router";
+
 
 @Component({
   selector: 'app-create-booking',
@@ -8,13 +11,27 @@ import { Booking } from "../booking";
 })
 export class CreateBookingComponent implements OnInit {
 
-  constructor() { }
-
-  /*booking: Booking = {
-    id =
-  }*/
-
-  ngOnInit(): void {
+  constructor(private router: Router, private activatedRoute: ActivatedRoute) {
   }
 
+  booking: Booking = {
+    id: 100,
+    name: "Your Name",
+    roomNumber: 100,
+    startDate: new Date(),
+    endDate: new Date()
+  }
+
+  ngOnInit(): void {
+    if (this.router.url != 'create'){
+      let id = Number(this.activatedRoute.snapshot.paramMap.get('id'));
+      let bookingById = Bookings.find(booking => booking.id == id)!;
+      this.booking = bookingById;
+    }
+  }
+
+  save(): void {
+    Bookings.push(this.booking);
+    this.router.navigate(['bookings']);
+  }
 }
